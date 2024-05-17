@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Unit {
+  id           Int                   @id @default(autoincrement())
+  name         String                @unique
+  abbreviation String                @unique
+  ingredient   Ingredients_Recipes[]
+}
+
+model Category {
+  id      Int                  @id @default(autoincrement())
+  name    String               @unique
+  recipes Categories_Recipes[]
+}
+
+model Ingredient {
+  id      Int                   @id @default(autoincrement())
+  name    String                @unique
+  recipes Ingredients_Recipes[]
+}
+
+model Recipe {
+  id          Int                   @id @default(autoincrement())
+  name        String
+  ingredients Ingredients_Recipes[]
+  categories  Categories_Recipes[]
+}
+
+model Categories_Recipes {
+  recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId   Int
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId Int
+  assignedAt DateTime @default(now())
+
+  @@id([recipeId, categoryId])
+}
+
+model Ingredients_Recipes {
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId     Int
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  ingredientId Int
+  quantity     Int
+  unit         Unit       @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId       Int
+  assignedAt   DateTime   @default(now())
+
+  @@id([recipeId, ingredientId])
+}
