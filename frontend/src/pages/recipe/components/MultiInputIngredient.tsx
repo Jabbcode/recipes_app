@@ -1,6 +1,7 @@
 import { SetStateAction, useEffect, useState } from 'react'
 import { Ingredient } from '@/types/Ingredient'
 import InputIngredient from './InputIngredient'
+import { findAllIngredients } from '@/services/ingredients'
 
 type Props = {
   ingredientsList: Ingredient[]
@@ -20,9 +21,8 @@ const MultiInputIngredient = ({
   useEffect(() => {
     const fecthIngredients = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/ingredients')
-        const { data } = await response.json()
-        setIngredients(data)
+        const {data} = await findAllIngredients()
+        setIngredients(data.data)
       } catch (error) {
         console.log(error)
       }
@@ -32,7 +32,10 @@ const MultiInputIngredient = ({
   }, [isOpenModalIngredient])
 
   const addInputIngredient = () => {
-    setIngredientsList((prevArray) => [...prevArray, { name: '', quantity: '', unit: '' }])
+    setIngredientsList((prevArray) => [
+      ...prevArray,
+      { name: '', quantity: '', unit: { id: 0, name: '' } }
+    ])
   }
 
   return (

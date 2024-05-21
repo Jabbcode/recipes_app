@@ -3,6 +3,8 @@ import { Ingredient } from '@/types/Ingredient'
 import { Category } from '@/types/Category'
 import { toast } from 'sonner'
 import MultiInputIngredient from './MultiInputIngredient'
+import { addRecipe } from '@/services/recipes'
+import { findAllCategories } from '@/services/categories'
 
 type Props = {
   isOpenModalCategory: boolean
@@ -17,20 +19,19 @@ const RecipeForm = ({
   onCloseModalCategory,
   onCloseModalIngredient
 }: Props) => {
-  const [form, setForm] = useState([])
+  const [form, setForm] = useState<any>([])
 
   const [selectedCategoriesOptions, setSelectedCategoriesOptions] = useState<string[]>([])
   const [ingredientsList, setIngredientsList] = useState<Ingredient[]>([
-    { name: '', quantity: '', unit: '' }
+    { name: '', quantity: '', unit: { id: 0, name: '' } }
   ])
   const [categories, setCategories] = useState<Category[]>([])
 
   useEffect(() => {
     const fecthCategories = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/categories')
-        const { data } = await response.json()
-        setCategories(data)
+        const {data} = await findAllCategories()
+        setCategories(data.data)
       } catch (error) {
         console.log(error)
       }
@@ -54,7 +55,7 @@ const RecipeForm = ({
     )
     setSelectedCategoriesOptions(selectedValues)
 
-    setForm((prevForm) => ({
+    setForm((prevForm: any) => ({
       ...prevForm,
       categories: selectedValues.map((id) => {
         return { id: Number(id) }
@@ -79,18 +80,12 @@ const RecipeForm = ({
     const ingredients = onChangeSetIngredients(ingredientsList)
 
     try {
-      const response = await fetch('http://localhost:3000/api/recipes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ...form,
-          ingredients
-        })
+      const response = await addRecipe({
+        name: form.name,
+        categories: form.categories,
+        ingredients
       })
-      const data = await response.json()
-      toast(data.message)
+      toast(response.data.message)
 
       //TODO: lIMPIAR FORMULARIO AL TERMINAR
     } catch (error) {
@@ -141,8 +136,12 @@ const RecipeForm = ({
               <option selected disabled>
                 Seleccione una categoria
               </option>
-              {categories.map((category) => {
-                return <option key={category.id} value={category.id}>{category.name}</option>
+              {categories?.map((category) => {
+                return (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                )
               })}
             </select>
           </div>

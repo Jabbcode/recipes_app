@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
 import RecipeForm from '@/pages/recipe/components/RecipeForm'
-import CreateIngredientModal from '@/components/CreateIngredientModal'
-import CreateCategoryModal from '@/components/CreateCategoryModal'
+import AddIngredientModal from '@/pages/recipe/components/AddIngredientModal'
+import AddCategoryModal from '@/pages/recipe/components/AddCategoryModal'
 
-export const RecipePage = () => {
+const RecipePage = () => {
   const [isOpenModalCategory, setIsOpenModalCategory] = useState(false)
   const [isOpenModalIngredient, setIsOpenModalIngredient] = useState(false)
 
@@ -25,9 +25,11 @@ export const RecipePage = () => {
         onCloseModalIngredient={setIsOpenModalIngredient}
       />
 
-      <CreateCategoryModal isOpen={isOpenModalCategory} onClose={onCloseModalCategory} />
+      <AddCategoryModal isOpen={isOpenModalCategory} onClose={onCloseModalCategory} />
 
-      <CreateIngredientModal isOpen={isOpenModalIngredient} onClose={onCloseModalIngredient} />
+      <AddIngredientModal isOpen={isOpenModalIngredient} onClose={onCloseModalIngredient} />
     </>
   )
 }
+
+export default RecipePage

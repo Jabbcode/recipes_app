@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Ingredient } from '@/types/Ingredient'
 import { Unit } from '@/types/Unit'
+import { findAllUnits } from '@/services/units'
 
 type Props<T> = {
   index: number
-  ingredients: Ingredient[]
+  ingredients: T[]
   setIngredients: React.Dispatch<React.SetStateAction<T[]>>
 }
 
@@ -20,9 +21,8 @@ const InputIngredient = ({ index, ingredients, setIngredients }: Props<Ingredien
   useEffect(() => {
     const fecthUnits = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/units')
-        const { data } = await response.json()
-        setUnits(data)
+        const {data} = await findAllUnits()
+        setUnits(data.data)
       } catch (error) {
         console.log(error)
       }
@@ -71,8 +71,12 @@ const InputIngredient = ({ index, ingredients, setIngredients }: Props<Ingredien
         <option selected disabled>
           Seleccione una medida
         </option>
-        {units.map((unit) => {
-          return <option key={unit.id} value={unit.id}>{unit.name}</option>
+        {units?.map((unit) => {
+          return (
+            <option key={unit.id} value={unit.id}>
+              {unit.name}
+            </option>
+          )
         })}
       </select>
       {index !== 0 && (
