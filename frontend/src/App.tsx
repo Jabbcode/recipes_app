@@ -1,11 +1,16 @@
 import './App.css'
-import { RecipePage } from './pages/recipe'
+import { Outlet } from 'react-router-dom'
+
+import Navbar from './components/Navbar'
 
 function App() {
   return (
-    <>
-      <RecipePage />
-    </>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Navbar />
+      <div>
+        <Outlet />
+      </div>
+    </div>
   )
 }
 
